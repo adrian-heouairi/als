@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source -- "$(dirname -- "$(dirname -- "$(realpath -- "$0")")")/source/als-bin.sh" || exit 1
+source "$(dirname "$(dirname "$(realpath -- "$BASH_SOURCE")")")"/source/als-bin.sh || exit 1
 
 # Bypass set -u
 action=${1+"$1"}
@@ -9,72 +9,77 @@ shift
 mkdir -p -- ~/bin ~/.local/bin ~/.local/share/applications ~/.config/autostart "$ALS_INSTALLED_FULLPATH" "$ALS_CUSTOM_FULLPATH" "$ALS_INSTALLED_FULLPATH"/{packages,programs,bin-symlinks} "$ALS_CUSTOM_FULLPATH"/{bin,autostart.d,env.d,repository}
 
 cp -f -- "$ALS_FULLPATH"/als-autostart.desktop ~/.config/autostart/
-put-line-in-file.sh ~/.bashrc "source -- $ALS_FULLPATH_SHELL/source/env.sh"
-put-line-in-file.sh ~/.profile "source -- $ALS_FULLPATH_SHELL/source/env.sh"
+put-line-in-file.sh ~/.bashrc "source $ALS_FULLPATH_SHELL/source/bashrc.sh"
+put-line-in-file.sh ~/.profile "ALS_ARG_ALS_FULLPATH=$ALS_FULLPATH_SHELL source $ALS_FULLPATH_SHELL/source/profile.sh"
 
 # als install upgrade
 # any change in a package is considered an update, packages with an update.sh are to have update.sh run at every update and at install
-# support multiple repos
 # the following packages have been deleted from upstream, consider removing them
 
 [ "$action" ] || exit 0
 
-repos="$ALS_CUSTOM_FULLPATH/repository
-$ALS_FULLPATH/repository"
+# Repositories before in the list have more priority for packages with the same name
+pkg_repos=("$ALS_CUSTOM_FULLPATH/repository" "$ALS_FULLPATH/repository")
 
-IFS=$'\n' # TODO Support \n in filenames
-set -f
+# Format to manipulate package names: arrays of package names
+pkg_object_prefix=pkg_object_
 
-package_fullpaths=
-for repo in $repos; do
-    [ -d "$repo" ] || continue
-    package_fullpaths=$package_fullpaths$(find "$repo" -mindepth 1 -maxdepth 1)$'\n'
-done
-
-parse_packages() {
-    packages=()
-    for i in $package_fullpaths; do
-        local package_name=$(basename -- "$i")
-        local object_name=pkg_$package_name
-        [ "${!object_name[name]+"${!object_name[name]}"}" ] && continue
-
-        packages+=("$object_name")
-        declare -A "$object_name"
-        printf -v "${object_name}[name]" %s "$package_name"
-        printf -v "${object_name}[fullpath]" %s "$package_name"
-        printf -v "${object_name}[tags]" %s "$(cat -- "$i/tags.txt" 2> /dev/null || true)" # tags.txt contains \n-separated tags
-        printf -v "${object_name}[installed]" %s "$([ -e "$ALS_INSTALLED_FULLPATH/packages/$package_name" ] && echo true || echo false)"
-    done
+f_pkg_exists() {
+    local package_name=$1
+    local object_name=$pkg_object_prefix$package_name
+    [ -v "${object_name}[name]" ]
 }
-parse_packages
 
-print_package_array() {
+pkg_all=()
+while IFS= read -rd '' i; do
+    package_name=$(basename -- "$i")
+    package_object_name=$pkg_object_prefix$package_name
+    [ -v "${package_object_name}[name]" ] && continue
+
+    pkg_all+=("$package_name")
+    declare -A "$package_object_name"
+    printf -v "${package_object_name}[name]" %s "$package_name"
+    printf -v "${package_object_name}[fullpath]" %s "$i"
+    printf -v "${package_object_name}[tags]" %s "$(cat -- "$i/tags.txt" 2> /dev/null || true)" # tags.txt contains \n-separated tags
+    printf -v "${package_object_name}[installed]" %s "$([ -e "$ALS_INSTALLED_FULLPATH/packages/$package_name" ] && echo true || echo false)"
+done < <(find "${pkg_repos[@]}" -mindepth 1 -maxdepth 1 -print0)
+
+fpkg_array_to_string() {
     printf '%s\n' "$@"
 }
 
-print_all_packages() {
-    print_package_array "${packages[@]}"
+fpkg_field() {
+    local package_name=$1 field=$2
+    local object_name=$pkg_object_prefix$package_name
+    printf '%s\n' "${!object_name[$field]}"
 }
 
-print_installed_packages() {
-    local i pkgs=()
-    for i in $(print_all_packages); do
-        [ "${!i[installed]}" = true ] && pkgs+=("$i")
+fpkg_is_installed() {
+    local package_name=$1
+    [ "$(f_pkg_field "$package_name" installed)" = true ]
+}
+
+fpkg_get_all() {
+    local var_name=$1 # The name of the variable in which we put the resulting array
+    copy_array pkg_all "$var_name"
+}
+
+fpkg_get_installed() {
+    local var_name=$1 i res=()
+    for i in "${pkg_all[@]}"; do
+        fpkg_is_installed "$i" && res+=("$i")
     done
 
-    print_package_array "${pkgs[@]}"
+    copy_array res "$var_name"
 }
 
-print_packages_matching_tag() {
-    local tag=$1 i pkgs=()
-    for i in $(print_all_packages); do
-        grep -Fx -- "$tag" <<< "${!i[tags]}" &> /dev/null && pkgs+=("$i") # TODO Do this in Bash
+fpkg_get_matching_tag() {
+    local var_name=$1 tag=$2 i res=()
+    for i in "${pkg_all[@]}"; do
+        grep -qFx -- "$tag" <<< "$(fpkg_field "$i" tags)" && res+=("$i") # TODO Do this in Bash
     done
 
-    if [ "${pkgs[*]}" ]; then
-        print_package_array "${pkgs[@]}"
-    else
-        print-err "No packages with tag '$tag' found"
-    fi
-}
+    copy_array res "$var_name"
 
+    [ "${res[*]}" ] || print-err "No packages with tag '$tag' found"
+}
