@@ -170,7 +170,11 @@ if [ "$action" = install ]; then
     done
 
     for i in "${to_install[@]}"; do
-        { ! fpkg_is_installed "$i"; } && fpkg_install "$i"
+        if fpkg_is_installed "$i"; then
+            echo "Skipping '$i' as it is already installed"
+        else
+            fpkg_install "$i"
+        fi
     done
 elif [ "$action" = list ]; then
     fpkg_get_all all_packages
