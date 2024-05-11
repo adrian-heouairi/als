@@ -48,7 +48,6 @@ fpkg_parse_deps() {
 
 pkg_all=()
 while IFS= read -rd '' i; do
-    print-debug "Processing package '$i'"
     package_name=$(basename -- "$i")
     fpkg_exists "$package_name" && continue
 
@@ -59,7 +58,6 @@ while IFS= read -rd '' i; do
     fpkg_set_field "$package_name" tags "$(fpkg_parse_deps "$i/tags.txt" || true)"
 done < <(find "${pkg_repos[@]}" -mindepth 1 -maxdepth 1 -print0)
 
-print-debug "Point 1"
 
 fpkg_is_installed() {
     local package_name=$1
@@ -68,10 +66,8 @@ fpkg_is_installed() {
 
 fpkg_get_all() {
     local var_name=$1 # The name of the variable in which we put the resulting array
-    print-debug "Point 4"
     type copy_array
     copy_array pkg_all "$var_name"
-    print-debug "Point 5"
 }
 
 fpkg_get_installed() {
@@ -147,7 +143,10 @@ fpkg_install() {
     cp -r -- "$(f_pkg_field "$package_name" fullpath)" "$(f_pkg_field "$package_name" installed_fullpath)"
 }
 
-print-debug "Point 2"
+fpkg_print_array() {
+    local var_name=$1 var_name_star=$var_name"[*]"
+    [ "${!var_name_star}" ] && printf '%s\n' "${!var_name_star}"
+}
 
 # For now installing a package already installed does nothing
 if [ "$action" = install ]; then
@@ -176,20 +175,11 @@ if [ "$action" = install ]; then
         { ! fpkg_is_installed "$i"; } && fpkg_install "$i"
     done
 elif [ "$action" = list ]; then
-    print-debug "Point 3"
-    print-debug "${pkg_all[*]}"
     fpkg_get_all all_packages
-    print-debug "All packages: ${all_packages[*]}"
-    for i in "${all_packages[@]}"; do
-        printf '%s ' "$i"
-    done
-    echo
+    fpkg_print_array all_packages
 elif [ "$action" = list-installed ]; then
     fpkg_get_installed installed_packages
-    for i in "${installed_packages[@]}"; do
-        printf '%s ' "$i"
-    done
-    echo
+    fpkg_print_array installed_packages
 else
     print-err "Unknown action '$action'"
     exit 1
