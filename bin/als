@@ -48,6 +48,7 @@ fpkg_parse_deps() {
 
 pkg_all=()
 while IFS= read -rd '' i; do
+    print-debug "Processing package '$i'"
     package_name=$(basename -- "$i")
     fpkg_exists "$package_name" && continue
 
