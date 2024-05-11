@@ -9,10 +9,9 @@ print-debug point x1
 print-debug point x2
     local i c=0
     for i in "${!from_var_name[@]}"; do
-        print-debug point x3
-        printf -v "${to_var_name}[c]" %s "$i"
-        print-debug point x4
-        ((c++))
+        print-debug point x3 "i = $i"
+        printf -v "${to_var_name}[$((c++))]" %s "$i"
+        print-debug point x4 "res = ${!to_var_name[c]}"
     done
 }
 
