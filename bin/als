@@ -142,39 +142,78 @@ fpkg_install() {
     cp -r -- "$(fpkg_field "$package_name" fullpath)" "$(fpkg_field "$package_name" installed_fullpath)"
 }
 
+# Assumes the package is installed
+fpkg_remove() {
+    local package_name=$1
+    local installed_fullpath=$(fpkg_field "$package_name" installed_fullpath)
+
+    [ -f "$installed_fullpath/stop-daemons.sh" ] && "$installed_fullpath/stop-daemons.sh"
+
+    rm -rf -- "$installed_fullpath"
+}
+
+# Assumes the package is installed
+fpkg_upgrade() {
+    local package_name=$1
+
+    fpkg_remove "$package_name"
+    fpkg_install "$package_name"
+}
+
 fpkg_print_array() {
     (($# > 0)) && printf '%s\n' "$*" || true
 }
 
-# For now installing a package already installed does nothing
-if [ "$action" = install ]; then
-    to_install=()
+fpkg_parse_args() {
+    local var_name=$1 res=()
+    shift
+
     for i; do
-        if [[ $i =~ ^'@'(.+) ]]; then
-            fpkg_get_matching_tag to_append "${BASH_REMATCH[1]}"
+            if [[ $i =~ ^'@'(.+) ]]; then
+                fpkg_get_matching_tag pkg_to_append "${BASH_REMATCH[1]}"
 
-            [ "${to_append[*]}" ] || {
-                print-err "No packages with tag '${BASH_REMATCH[1]}' found"
-                exit 1
-            }
+                [ "${pkg_to_append[*]}" ] || print_err_exit "No packages with tag '${BASH_REMATCH[1]}' found"
 
-            to_install+=("${to_append[@]}")
-        else
-            fpkg_exists "$i" || {
-                print-err "No package named '$i' found"
-                exit 1
-            }
+                res+=("${pkg_to_append[@]}")
+            else
+                fpkg_exists "$i" || print_err_exit "No package named '$i' found"
 
-            to_install+=("$i")
-        fi
+                res+=("$i")
+            fi
+        done
+
+        copy_array res "$var_name"
+}
+
+if [ "$action" = install ]; then
+    fpkg_parse_args to_install "$@"
+
+    for i in "${to_install[@]}"; do
+        fpkg_is_installed "$i" && print_err_exit "'$i' is already installed"
     done
 
     for i in "${to_install[@]}"; do
-        if fpkg_is_installed "$i"; then
-            echo "Skipping '$i' as it is already installed"
-        else
-            fpkg_install "$i"
-        fi
+        fpkg_install "$i"
+    done
+elif [ "$action" = upgrade ]; then
+    fpkg_parse_args to_upgrade "$@"
+
+    for i in "${to_upgrade[@]}"; do
+        fpkg_is_installed "$i" || print_err_exit "'$i' is not installed"
+    done
+
+    for i in "${to_upgrade[@]}"; do
+        fpkg_upgrade "$i"
+    done
+elif [ "$action" = remove ]; then
+    fpkg_parse_args to_remove "$@"
+
+    for i in "${to_remove[@]}"; do
+        fpkg_is_installed "$i" || print_err_exit "'$i' is not installed"
+    done
+
+    for i in "${to_remove[@]}"; do
+        fpkg_remove "$i"
     done
 elif [ "$action" = list ]; then
     fpkg_get_all all_packages
@@ -183,6 +222,5 @@ elif [ "$action" = list-installed ]; then
     fpkg_get_installed installed_packages
     fpkg_print_array "${installed_packages[@]}"
 else
-    print-err "Unknown action '$action'"
-    exit 1
+    print_err_exit "Unknown action '$action'"
 fi

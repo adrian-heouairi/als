@@ -15,3 +15,16 @@ is_assoc_array() {
     local var_name=$1
     [[ $(declare -p "$var_name" 2> /dev/null || true) =~ ^"declare -A" ]]
 }
+
+print_err() {
+    printf '\e[1;31m%s\e[m\n' "$*" >&2
+}
+
+print_debug() {
+    printf '\e[1;34m%s\e[m\n' "$*" >&2
+}
+
+print_err_exit() {
+    print_err "$1"
+    exit "${2:-1}" # $2 or 1 if $2 is not set
+}
