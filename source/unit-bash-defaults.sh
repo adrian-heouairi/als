@@ -11,7 +11,7 @@ shopt -s nullglob
 
 trap exit SIGINT
 
-[ "$1" = --cat ] && {
+[ "${1+"$1"}" = --cat ] && {
     cat -- "$0"
     exit 1 # Makes the sourcing script exit
 }
