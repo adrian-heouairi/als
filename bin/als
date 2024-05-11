@@ -29,8 +29,8 @@ fpkg_exists() {
 
 fpkg_field() {
     local package_name=$1 field=$2
-    local object_name=$pkg_object_prefix$package_name
-    printf '%s\n' "${!object_name[$field]}"
+    local object_name_field=$pkg_object_prefix$package_name"[$field]"
+    printf '%s\n' "${!object_name_field}"
 }
 
 fpkg_set_field() {
