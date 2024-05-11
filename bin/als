@@ -4,7 +4,7 @@ source "$(dirname "$(dirname "$(realpath -- "$BASH_SOURCE")")")"/source/als-bin.
 
 # Bypass set -u
 action=${1+"$1"}
-shift
+shift || true
 
 mkdir -p -- ~/bin ~/.local/bin ~/.local/share/applications ~/.config/autostart "$ALS_INSTALLED_FULLPATH" "$ALS_CUSTOM_FULLPATH" "$ALS_INSTALLED_FULLPATH"/{packages,programs,bin-symlinks} "$ALS_CUSTOM_FULLPATH"/{bin,autostart.d,env.d,repository}
 ln -s -f -- "$ALS_FULLPATH"/source/ "$ALS_INSTALLED_FULLPATH"/source
