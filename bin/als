@@ -146,6 +146,7 @@ fpkg_install() {
 fpkg_print_array() {
     print-debug Test
     [ "$*" ] && printf '%s\n' "$*"
+    print-debug Test2
 }
 
 # For now installing a package already installed does nothing
