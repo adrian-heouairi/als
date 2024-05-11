@@ -144,6 +144,8 @@ fpkg_install() {
     cp -r -- "$(f_pkg_field "$package_name" fullpath)" "$(f_pkg_field "$package_name" installed_fullpath)"
 }
 
+print-debug "Point 2"
+
 # For now installing a package already installed does nothing
 if [ "$action" = install ]; then
     to_install=()
