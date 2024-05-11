@@ -144,7 +144,7 @@ fpkg_install() {
 }
 
 fpkg_print_array() {
-    (($# > 0)) && printf '%s\n' "$*"
+    (($# > 0)) && printf '%s\n' "$*" || true
 }
 
 # For now installing a package already installed does nothing
