@@ -164,6 +164,7 @@ fpkg_print_array() {
     (($# > 0)) && printf '%s\n' "$*" || true
 }
 
+# TODO Handle multiple times the same package
 fpkg_parse_args() {
     local var_name=$1 res=()
     shift
@@ -196,7 +197,11 @@ if [ "$action" = install ]; then
         fpkg_install "$i"
     done
 elif [ "$action" = upgrade ]; then
-    fpkg_parse_args to_upgrade "$@"
+    if (($# == 0)); then
+        fpkg_get_installed to_upgrade
+    else
+        fpkg_parse_args to_upgrade "$@"
+    fi
 
     for i in "${to_upgrade[@]}"; do
         fpkg_is_installed "$i" || print_err_exit "'$i' is not installed"
