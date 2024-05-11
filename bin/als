@@ -61,7 +61,7 @@ done < <(find "${pkg_repos[@]}" -mindepth 1 -maxdepth 1 -print0)
 
 fpkg_is_installed() {
     local package_name=$1
-    [ -e "$(f_pkg_field "$package_name" installed_fullpath)" ]
+    [ -e "$(fpkg_field "$package_name" installed_fullpath)" ]
 }
 
 fpkg_get_all() {
@@ -97,7 +97,7 @@ fpkg_apt_update_once() {
 # We assume the package exists and is not installed
 fpkg_install() {
     local package_name=$1
-    local fullpath=$(f_pkg_field "$package_name" fullpath)
+    local fullpath=$(fpkg_field "$package_name" fullpath)
 
     local i
     for i in "$fullpath"/bin/*; do
@@ -139,7 +139,7 @@ fpkg_install() {
     [ -f "$fullpath/install.sh" ] && "$fullpath/install.sh"
     [ -f "$fullpath/autostart.sh" ] && "$fullpath/autostart.sh" & disown
 
-    cp -r -- "$(f_pkg_field "$package_name" fullpath)" "$(f_pkg_field "$package_name" installed_fullpath)"
+    cp -r -- "$(fpkg_field "$package_name" fullpath)" "$(fpkg_field "$package_name" installed_fullpath)"
 }
 
 fpkg_print_array() {
