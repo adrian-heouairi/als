@@ -173,6 +173,7 @@ if [ "$action" = install ]; then
         { ! fpkg_is_installed "$i"; } && fpkg_install "$i"
     done
 elif [ "$action" = list ]; then
+    print-debug "Point 3"
     fpkg_get_all all_packages
     print-debug "All packages: ${all_packages[*]}"
     for i in "${all_packages[@]}"; do
