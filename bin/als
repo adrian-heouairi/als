@@ -170,6 +170,7 @@ if [ "$action" = install ]; then
     done
 elif [ "$action" = list ]; then
     fpkg_get_all all_packages
+    print-debug "All packages: ${all_packages[*]}"
     for i in "${all_packages[@]}"; do
         printf '%s ' "$i"
     done
