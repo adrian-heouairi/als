@@ -13,3 +13,8 @@ copy_array() {
         ((c++))
     done
 }
+
+is_assoc_array() {
+    local var_name=$1
+    [[ $(declare -p "$var_name" 2> /dev/null || true) =~ ^"declare -A" ]]
+}
