@@ -7,14 +7,11 @@ action=${1+"$1"}
 shift
 
 mkdir -p -- ~/bin ~/.local/bin ~/.local/share/applications ~/.config/autostart "$ALS_INSTALLED_FULLPATH" "$ALS_CUSTOM_FULLPATH" "$ALS_INSTALLED_FULLPATH"/{packages,programs,bin-symlinks} "$ALS_CUSTOM_FULLPATH"/{bin,autostart.d,env.d,repository}
+ln -s -f -- "$ALS_FULLPATH"/source/ "$ALS_INSTALLED_FULLPATH"/source
 
 cp -f -- "$ALS_FULLPATH"/als-autostart.desktop ~/.config/autostart/
 put-line-in-file.sh ~/.bashrc "source $ALS_FULLPATH_SHELL/source/bashrc.sh"
 put-line-in-file.sh ~/.profile "ALS_ARG_ALS_FULLPATH=$ALS_FULLPATH_SHELL source $ALS_FULLPATH_SHELL/source/profile.sh"
-
-# als install upgrade
-# any change in a package is considered an update, packages with an update.sh are to have update.sh run at every update and at install
-# the following packages have been deleted from upstream, consider removing them
 
 [ "$action" ] || exit 0
 
@@ -24,28 +21,10 @@ pkg_repos=("$ALS_CUSTOM_FULLPATH/repository" "$ALS_FULLPATH/repository")
 # Format to manipulate package names: arrays of package names
 pkg_object_prefix=pkg_object_
 
-f_pkg_exists() {
+fpkg_exists() {
     local package_name=$1
     local object_name=$pkg_object_prefix$package_name
     [ -v "${object_name}[name]" ]
-}
-
-pkg_all=()
-while IFS= read -rd '' i; do
-    package_name=$(basename -- "$i")
-    package_object_name=$pkg_object_prefix$package_name
-    [ -v "${package_object_name}[name]" ] && continue
-
-    pkg_all+=("$package_name")
-    declare -A "$package_object_name"
-    printf -v "${package_object_name}[name]" %s "$package_name"
-    printf -v "${package_object_name}[fullpath]" %s "$i"
-    printf -v "${package_object_name}[tags]" %s "$(cat -- "$i/tags.txt" 2> /dev/null || true)" # tags.txt contains \n-separated tags
-    printf -v "${package_object_name}[installed]" %s "$([ -e "$ALS_INSTALLED_FULLPATH/packages/$package_name" ] && echo true || echo false)"
-done < <(find "${pkg_repos[@]}" -mindepth 1 -maxdepth 1 -print0)
-
-fpkg_array_to_string() {
-    printf '%s\n' "$@"
 }
 
 fpkg_field() {
@@ -54,9 +33,34 @@ fpkg_field() {
     printf '%s\n' "${!object_name[$field]}"
 }
 
+fpkg_set_field() {
+    local package_name=$1 field=$2 value=$3
+    local object_name=$pkg_object_prefix$package_name
+    declare -A "$object_name"
+    printf -v "${object_name}[$field]" %s "$value"
+}
+
+fpkg_parse_deps() {
+    local path=$1
+    [ -f "$path" ] || return 1
+    printf '%s\n' $(sed -- 's/#.*//' "$path")
+}
+
+pkg_all=()
+while IFS= read -rd '' i; do
+    package_name=$(basename -- "$i")
+    fpkg_exists "$package_name" && continue
+
+    pkg_all+=("$package_name")
+    fpkg_set_field "$package_name" name "$package_name"
+    fpkg_set_field "$package_name" fullpath "$i"
+    fpkg_set_field "$package_name" installed_fullpath "$ALS_INSTALLED_FULLPATH/packages/$package_name"
+    fpkg_set_field "$package_name" tags "$(fpkg_parse_deps "$i/tags.txt" || true)"
+done < <(find "${pkg_repos[@]}" -mindepth 1 -maxdepth 1 -print0)
+
 fpkg_is_installed() {
     local package_name=$1
-    [ "$(f_pkg_field "$package_name" installed)" = true ]
+    [ -e "$(f_pkg_field "$package_name" installed_fullpath)" ]
 }
 
 fpkg_get_all() {
@@ -76,10 +80,106 @@ fpkg_get_installed() {
 fpkg_get_matching_tag() {
     local var_name=$1 tag=$2 i res=()
     for i in "${pkg_all[@]}"; do
-        grep -qFx -- "$tag" <<< "$(fpkg_field "$i" tags)" && res+=("$i") # TODO Do this in Bash
+        grep -qFx -- "$tag" <<< "$(fpkg_field "$i" tags)" && res+=("$i") # TODO Do this in Bash?
     done
 
     copy_array res "$var_name"
-
-    [ "${res[*]}" ] || print-err "No packages with tag '$tag' found"
 }
+
+fpkg_apt_update_once() {
+    [ -v pkg_apt_update_once ] || {
+        sudo apt update
+        pkg_apt_update_once=true
+    }
+}
+
+# We assume the package exists and is not installed
+fpkg_install() {
+    local package_name=$1
+    local fullpath=$(f_pkg_field "$package_name" fullpath)
+
+    local i
+    for i in "$fullpath"/bin/*; do
+        local basename=$(basename -- "$i")
+        ln -s -f -- "../packages/$package_name/bin/$basename" "$ALS_INSTALLED_FULLPATH/bin-symlinks/$basename"
+    done
+
+    [ -d "$fullpath"/files-home ] && rsync -rl "$fullpath"/files-home/ ~/
+    [ -d "$fullpath"/files-root ] && sudo rsync -rl "$fullpath"/files-root/ /
+
+
+    [ -f "$fullpath/apt.txt" ] && {
+        fpkg_apt_update_once
+        sudo apt install -y $(fpkg_parse_deps "$fullpath/apt.txt")
+    }
+
+    [ -f "$fullpath/snap.txt" ] && sudo snap install $(fpkg_parse_deps "$fullpath/snap.txt")
+
+    [ -f "$fullpath/snap-classic.txt" ] && sudo snap install --classic $(fpkg_parse_deps "$fullpath/snap-classic.txt")
+
+    [ -f "$fullpath/pip.txt" ] && {
+        type pip3 &> /dev/null || {
+            fpkg_apt_update_once
+            sudo apt install -y python3-pip
+        }
+        pip3 install $(fpkg_parse_deps "$fullpath/pip.txt")
+    }
+
+    [ -f "$fullpath/pipx.txt" ] && {
+        type pipx &> /dev/null || {
+            fpkg_apt_update_once
+            sudo apt install -y pipx
+        }
+        pipx install $(fpkg_parse_deps "$fullpath/pipx.txt")
+    }
+
+
+    [ -f "$fullpath/stop-daemons.sh" ] && "$fullpath/stop-daemons.sh"
+    [ -f "$fullpath/install.sh" ] && "$fullpath/install.sh"
+    [ -f "$fullpath/autostart.sh" ] && "$fullpath/autostart.sh" & disown
+
+    cp -r -- "$(f_pkg_field "$package_name" fullpath)" "$(f_pkg_field "$package_name" installed_fullpath)"
+}
+
+# For now installing a package already installed does nothing
+if [ "$action" = install ]; then
+    to_install=()
+    for i; do
+        if [[ $i =~ ^'@'(.+) ]]; then
+            fpkg_get_matching_tag to_append "${BASH_REMATCH[1]}"
+
+            [ "${to_append[*]}" ] || {
+                print-err "No packages with tag '${BASH_REMATCH[1]}' found"
+                exit 1
+            }
+
+            to_install+=("${to_append[@]}")
+        else
+            fpkg_exists "$i" || {
+                print-err "No package named '$i' found"
+                exit 1
+            }
+
+            to_install+=("$i")
+        fi
+    done
+
+    for i in "${to_install[@]}"; do
+        { ! fpkg_is_installed "$i"; } && fpkg_install "$i"
+    done
+elif [ "$action" = list ]; then
+    fpkg_get_all all_packages
+    for i in "${all_packages[@]}"; do
+        printf '%s ' "$i"
+    done
+    echo
+elif [ "$action" = list-installed ]; then
+    fpkg_get_installed installed_packages
+    for i in "${installed_packages[@]}"; do
+        printf '%s ' "$i"
+    done
+    echo
+else
+    print-err "Unknown action '$action'"
+    exit 1
+fi

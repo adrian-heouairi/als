@@ -2,7 +2,7 @@
 
 # Works with symbolic links
 
-source -- "$(dirname -- "$(dirname -- "$(realpath -- "$0")")")/source/als-bin.sh" || exit 1
+source "$(dirname "$(dirname "$(realpath -- "$BASH_SOURCE")")")"/source/als-bin.sh || exit 1
 
 file=$1
 line=$2
