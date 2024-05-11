@@ -11,7 +11,7 @@ print-debug point x2
     for i in "${!from_var_name[@]}"; do
         print-debug point x3 "i = $i"
         printf -v "${to_var_name}[$((c++))]" %s "$i"
-        print-debug point x4 "res = ${!to_var_name[c]}"
+        print-debug point x4 "c = $c"
     done
 }
 
