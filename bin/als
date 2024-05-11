@@ -123,7 +123,7 @@ fpkg_install() {
             fpkg_apt_update_once
             sudo apt install -y python3-pip
         }
-        pip3 install $(fpkg_parse_deps "$fullpath/pip.txt")
+        pip3 install --user --break-system-packages $(fpkg_parse_deps "$fullpath/pip.txt")
     }
 
     [ -f "$fullpath/pipx.txt" ] && {
