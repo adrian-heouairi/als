@@ -145,7 +145,7 @@ fpkg_install() {
 
 fpkg_print_array() {
     local var_name=$1
-    local var_name_star=$var_name"[*]"
+    local var_name_star=$var_name"[@]"
     [ "${!var_name_star}" ] && printf '%s\n' "${!var_name_star}"
 }
 
