@@ -9,7 +9,12 @@ shift || true
 mkdir -p -- ~/bin ~/.local/bin ~/.local/share/applications ~/.config/autostart "$ALS_INSTALLED_FULLPATH" "$ALS_CUSTOM_FULLPATH" "$ALS_INSTALLED_FULLPATH"/{packages,programs,bin-symlinks} "$ALS_CUSTOM_FULLPATH"/{bin,autostart.d,env.d,repository}
 ln -s -f -- "$ALS_FULLPATH"/source/ "$ALS_INSTALLED_FULLPATH"/source
 
-cp -f -- "$ALS_FULLPATH"/als-autostart.desktop ~/.config/autostart/
+echo "[Desktop Entry]
+Exec=$ALS_FULLPATH/bin/als-autostart.sh
+Icon=dialog-scripts
+Name=als-autostart.sh
+Type=Application" > ~/.config/autostart/als-autostart.desktop
+
 put-line-in-file.sh ~/.bashrc "source $ALS_FULLPATH_SHELL/source/bashrc.sh"
 put-line-in-file.sh ~/.profile "ALS_ARG_ALS_FULLPATH=$ALS_FULLPATH_SHELL source $ALS_FULLPATH_SHELL/source/profile.sh"
 
