@@ -144,9 +144,7 @@ fpkg_install() {
 }
 
 fpkg_print_array() {
-    local var_name=$1
-    local var_name_star=$var_name"[@]"
-    [ "${!var_name_star}" ] && printf '%s\n' "${!var_name_star}"
+    [ "$*" ] && printf '%s\n' "$*"
 }
 
 # For now installing a package already installed does nothing
@@ -177,10 +175,10 @@ if [ "$action" = install ]; then
     done
 elif [ "$action" = list ]; then
     fpkg_get_all all_packages
-    fpkg_print_array all_packages
+    fpkg_print_array "${all_packages[@]}"
 elif [ "$action" = list-installed ]; then
     fpkg_get_installed installed_packages
-    fpkg_print_array installed_packages
+    fpkg_print_array "${installed_packages[@]}"
 else
     print-err "Unknown action '$action'"
     exit 1
