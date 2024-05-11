@@ -54,6 +54,7 @@ while IFS= read -rd '' i; do
     pkg_all+=("$package_name")
     fpkg_set_field "$package_name" name "$package_name"
     eval "print-debug \${$pkg_object_prefix$package_name[@]}"
+    print-debug $(fpkg_field "$package_name" name)
     fpkg_set_field "$package_name" fullpath "$i"
     fpkg_set_field "$package_name" installed_fullpath "$ALS_INSTALLED_FULLPATH/packages/$package_name"
     fpkg_set_field "$package_name" tags "$(fpkg_parse_deps "$i/tags.txt" || true)"
