@@ -68,7 +68,9 @@ fpkg_is_installed() {
 
 fpkg_get_all() {
     local var_name=$1 # The name of the variable in which we put the resulting array
+    print-debug "Point 4"
     copy_array pkg_all "$var_name"
+    print-debug "Point 5"
 }
 
 fpkg_get_installed() {
