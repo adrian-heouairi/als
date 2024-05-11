@@ -59,6 +59,8 @@ while IFS= read -rd '' i; do
     fpkg_set_field "$package_name" tags "$(fpkg_parse_deps "$i/tags.txt" || true)"
 done < <(find "${pkg_repos[@]}" -mindepth 1 -maxdepth 1 -print0)
 
+print-debug "Point 1"
+
 fpkg_is_installed() {
     local package_name=$1
     [ -e "$(f_pkg_field "$package_name" installed_fullpath)" ]
