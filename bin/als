@@ -157,7 +157,7 @@ fpkg_install() {
             sudo apt install -y build-essential procps curl file git
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         }
-        pipx install $(fpkg_parse_deps "$fullpath/pipx.txt")
+        brew install $(fpkg_parse_deps "$fullpath/brew.txt")
     }
 
 
