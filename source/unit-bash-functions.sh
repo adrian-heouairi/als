@@ -24,7 +24,29 @@ print_debug() {
     printf '\e[1;34m%s\e[m\n' "$*" >&2
 }
 
+print_info() {
+    printf '\e[1;32m%s\e[m\n' "$*" >&2
+}
+
 print_err_exit() {
     print_err "$1"
     exit "${2:-1}" # $2 or 1 if $2 is not set
+}
+
+# Input is \n-separated.
+# If there are arguments after shift, use $* without quotes. Otherwise use stdin.
+# Example: input_to_array x $'a\nb' c results in x=(a b c).
+input_to_array() {
+    local var_name=$1
+    shift
+    old_ifs=$IFS
+    IFS=$'\n'
+    local tmp
+    if (($# > 0)); then
+        tmp=($*)
+    else
+        tmp=($(cat))
+    fi
+    IFS=$old_ifs
+    copy_array tmp "$var_name"
 }
