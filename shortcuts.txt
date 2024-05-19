@@ -4,51 +4,73 @@ backends : xbindkeys, autokey, xinput(todo improve), kde_global, kde_custom, kon
 # Standard order of modifiers in xbindkeys: Control+Shift+Alt+Mod4+Mod5
 # The order of modifiers in KDE programs is Meta+Ctrl+Alt+Shift (Alt Gr cannot be used as a modifier)
 
-"printf %s "$(date +"%Y-%m-%d %H:%M:%S")" | xsel -b; notify-send 'Copied current date to clipboard'"
-Shift+Mod4 + d
+[]
+be=kde_custom
+cmd=maximize-window-class.sh Navigator.firefox
+sc=Mod4 + f
 
-"ids=$(wmctrl -lx | awk '$3 == "Navigator.firefox" { print $1 }'); for i in $ids; do wmctrl -Fir $i -b add,maximized_horz,maximized_vert; done"
-Mod4 + f
+[]
+be=kde_custom
+cmd=toggle-microphone-mute.sh
+sc=Alt + z
 
-"pacmd list-sources | grep -oP 'index: \d+' | awk '{ print $2 }' | xargs -I{} pactl set-source-mute {} toggle"
-Alt + z
+[]
+be=kde_custom
+cmd="wmctrl -Fa 'System Monitor' || gnome-system-monitor --show-processes-tab"
+sc=Control+Shift + Escape
 
-"wmctrl -Fa 'System Monitor' || gnome-system-monitor --show-processes-tab"
-Control+Shift + Escape
+[]
+be=xbindkeys
+cmd="killall -9 plasmashell; sleep .5; plasmashell --replace"
+sc=Control+Alt+Mod4 + p
 
-"killall -9 plasmashell; sleep .5; plasmashell --replace"
-Control+Alt+Mod4 + p
+[]
+be=xbindkeys
+cmd="killall -9 kwin kwin_x11; sleep .5; kwin_x11 --replace"
+sc=Control+Alt+Mod4 + w
 
-"killall -9 kwin kwin_x11; sleep .5; kwin_x11 --replace"
-Control+Alt+Mod4 + w
+[]
+be=xbindkeys
+cmd="killall -9 kglobalaccel5; sleep .5; kglobalaccel5"
+sc=Control+Alt+Mod4 + g
 
-"killall -9 kglobalaccel5; sleep .5; kglobalaccel5"
-Control+Alt+Mod4 + g
+[]
+be=xinput
+cmd="kde-volume.sh -5dB"
+sc=Mod4 + a
 
-"sed -Ez 's|.*\[Containments]\[1]\[Wallpaper]\[org\.kde\.image]\[General]\nImage=(file://)?([^\n]+).*|\2|' ~/.config/plasma-org.kde.plasma.desktop-appletsrc | sed 's|^|file://|' | xsel -b; notify-send -i edit-copy 'Copied wallpaper URL to clipboard' "$(xsel -o -b)""
-Alt+Mod4 + d
+[]
+be=xinput
+cmd="kde-volume.sh +5dB"
+sc=Mod4 + s
 
-"pactl set-sink-volume @DEFAULT_SINK@ -5%; qdbus org.kde.plasmashell /org/kde/osdService volumeChanged $(pactl get-sink-volume @DEFAULT_SINK@ | grep -Po '\d+(?=%)' | head -n 1) 400"
-Mod4 + a
-
-"pactl set-sink-volume @DEFAULT_SINK@ +5%; qdbus org.kde.plasmashell /org/kde/osdService volumeChanged $(pactl get-sink-volume @DEFAULT_SINK@ | grep -Po '\d+(?=%)' | head -n 1) 400"
-Mod4 + s
-
+[]
+be=xinput
 "xrandr-brightness.sh down"
 Shift+Alt + a
 
+[]
+be=xinput
 "xrandr-brightness.sh up"
 Shift+Alt + s
 
+[]
+be=kde_custom
 "if [ "$(xdotool getactivewindow getwindowname)" = 'Tagaini Jisho' ]; then xdotool getactivewindow windowminimize; else wmctrl -Fa 'Tagaini Jisho' || tagainijisho & fi"
 Shift+Mod4 + 1
 
+[]
+be=xinput
 "xset dpms force off"
 Alt+Mod4 + l
 
+[]
+be=xbindkeys
 "xdotool click 6"
 KP_Divide
 
+[]
+be=xbindkeys
 "xdotool click 7"
 KP_Multiply
 
@@ -64,17 +86,17 @@ KP_Multiply
 #"windows-cycle.sh ''"
 #Shift+Alt + 4
 
-"windows-cycle.sh '\[General]'"
-Shift+Alt + q
+#"windows-cycle.sh '\[General]'"
+#Shift+Alt + q
 
 #"windows-cycle.sh '\[Keep]'"
 #Shift+Alt + w
 
-"windows-cycle.sh 'Mozilla Firefox Private Browsing' 'firefox --private-window & while ! [[ $(wmctrl -l) =~ "Mozilla Firefox Private Browsing" ]]; do sleep .1; done; sleep .5; wmctrl -Fa "Mozilla Firefox Private Browsing"'"
-Shift+Alt + e
+#"windows-cycle.sh 'Mozilla Firefox Private Browsing' 'firefox --private-window & while ! [[ $(wmctrl -l) =~ "Mozilla Firefox Private Browsing" ]]; do sleep .1; done; sleep .5; wmctrl -Fa "Mozilla Firefox Private Browsing"'"
+#Shift+Alt + e
 
-"windows-cycle.sh '\[News]'"
-Shift+Alt + r
+#"windows-cycle.sh '\[News]'"
+#Shift+Alt + r
 
 #"windows-cycle.sh 'Misc - '"
 #Shift+Alt + a
@@ -82,27 +104,34 @@ Shift+Alt + r
 #"windows-cycle.sh '   Social - '"
 #Shift+Mod4 + s
 
-"windows-cycle.sh '\[Keep]'"
-Shift+Alt + d
+#"windows-cycle.sh '\[Keep]'"
+#Shift+Alt + d
 
 #"windows-cycle.sh ''"
 #Shift+Alt + f
 
-"windows-cycle.sh '\[Misc]'"
-Shift+Alt + z
+#"windows-cycle.sh '\[Misc]'"
+#Shift+Alt + z
 
-"windows-cycle.sh '\[Social]'"
-Shift+Alt + x
+#"windows-cycle.sh '\[Social]'"
+#Shift+Alt + x
 
-"windows-cycle.sh '\[Music]'"
-Shift+Alt + c
+#"windows-cycle.sh '\[Music]'"
+#Shift+Alt + c
 
-"windows-cycle.sh '\[Videos]'"
-Shift+Alt + v
+#"windows-cycle.sh '\[Videos]'"
+#Shift+Alt + v
 
 # See ~/.config/kglobalshortcutsrc
 
 #put_kde_keyboard_shortcut kmix mic_mute Alt+Z 'Microphone Mute'
+
+[]
+be=kde_global
+app=
+action=
+sc= # Shortcut will be removed from any KDE global then appended to possible shortcuts for this action
+
 put_kde_keyboard_shortcut kmix mute Alt+X 'Volume Mute'
 put_kde_keyboard_shortcut plasmashell 'toggle do not disturb' Alt+C
 put_kde_keyboard_shortcut mediacontrol playpausemedia Meta+Z 'Media Play'
@@ -117,5 +146,9 @@ put_kde_keyboard_shortcut plasmashell 'activate task manager entry 9' Meta+Shift
 put_kde_keyboard_shortcut kwin 'Window Close' Meta+X Alt+F4
 put_kde_keyboard_shortcut org.kde.krunner.desktop _launch Alt+Space Alt+F2
 
-kde-add-keyboard-shortcut.sh 'xrandr-brightness.sh down' Meta+Shift+A
-kde-add-keyboard-shortcut.sh 'xrandr-brightness.sh up' Meta+Shift+S
+
+#todo konsole
+
+[]
+be=konsole
+# todo ctrl a c f l t v w, kill task

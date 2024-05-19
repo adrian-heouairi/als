@@ -155,10 +155,11 @@ fpkg_install() {
         type brew &> /dev/null || {
             fpkg_apt_update_once
             sudo apt install -y build-essential procps curl file git
-            #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> ~/.bashrc
             eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
         }
+        ulimit -Sn "$(ulimit -Hn)"
         brew install $(fpkg_parse_deps "$fullpath/brew.txt")
     }
 
