@@ -257,10 +257,10 @@ if [ "$action" = install ]; then
     fpkg_parse_args to_install "$@"
 
     for i in "${to_install[@]}"; do
-        fpkg_is_installed "$i" && print_err_exit "'$i' is already installed"
-    done
-
-    for i in "${to_install[@]}"; do
+        fpkg_is_installed "$i" && {
+            print_info "'$i' is already installed, skipping"
+            continue
+        }
         fpkg_install "$i"
     done
 elif [ "$action" = upgrade ]; then
@@ -271,10 +271,10 @@ elif [ "$action" = upgrade ]; then
     fi
 
     for i in "${to_upgrade[@]}"; do
-        fpkg_is_installed "$i" || print_err_exit "'$i' is not installed"
-    done
-
-    for i in "${to_upgrade[@]}"; do
+        fpkg_is_installed "$i" || {
+            print_info "'$i' is not installed, skipping"
+            continue
+        }
         fpkg_upgrade "$i"
     done
 elif [ "$action" = remove ]; then
@@ -283,10 +283,10 @@ elif [ "$action" = remove ]; then
     fpkg_parse_args to_remove "$@"
 
     for i in "${to_remove[@]}"; do
-        fpkg_is_installed "$i" || print_err_exit "'$i' is not installed"
-    done
-
-    for i in "${to_remove[@]}"; do
+        fpkg_is_installed "$i" || {
+            print_info "'$i' is not installed, skipping"
+            continue
+        }
         fpkg_remove "$i"
     done
 elif [ "$action" = list ]; then
