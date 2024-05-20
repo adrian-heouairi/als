@@ -3,5 +3,6 @@
 case "$1" in
 hms) date +%H:%M:%S;;
 ymd) date +%Y-%m-%d;;
-*) date '+%Y-%m-%d %H:%M:%S';;
+ymdhms) date '+%Y-%m-%d %H:%M:%S';;
+*) exit 1;;
 esac

@@ -1,11 +1,11 @@
-Install autokey-qt:
+Install latest autokey-qt (tested):
 fpkg_apt_update_once
 sudo apt install -y curl wmctrl
 pipx install autokey
 pipx inject autokey $(curl 'https://raw.githubusercontent.com/autokey/autokey/master/pip-requirements.txt')
 dpkg --compare-versions "$(get-python3-version.sh)" ge 3.12 && pipx inject autokey pyasyncore
 
-Install autokey-gtk:
+Install latest autokey-gtk (tested but status icon is broken in Kubuntu 24.04):
 fpkg_apt_update_once
 sudo apt install -y curl
 sudo apt install -y $(curl 'https://raw.githubusercontent.com/autokey/autokey/master/apt-requirements.txt')

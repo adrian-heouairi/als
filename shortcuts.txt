@@ -4,12 +4,12 @@ backends : xbindkeys, autokey, xinput(todo improve), kde_global, kde_custom, kon
 # Standard order of modifiers in xbindkeys: Control+Shift+Alt+Mod4+Mod5
 # The order of modifiers in KDE programs is Meta+Ctrl+Alt+Shift (Alt Gr cannot be used as a modifier)
 
-[]
+[] m
 be=kde_custom
 cmd=maximize-window-class.sh Navigator.firefox
 sc=Mod4 + f
 
-[]
+[] m
 be=kde_custom
 cmd=toggle-microphone-mute.sh
 sc=Alt + z
@@ -34,27 +34,27 @@ be=xbindkeys
 cmd="killall -9 kglobalaccel5; sleep .5; kglobalaccel5"
 sc=Control+Alt+Mod4 + g
 
-[]
+[] m
 be=xinput
 cmd="kde-volume.sh -5dB"
 sc=Mod4 + a
 
-[]
+[] m
 be=xinput
 cmd="kde-volume.sh +5dB"
 sc=Mod4 + s
 
-[]
+[] m
 be=xinput
 "xrandr-brightness.sh down"
 Shift+Alt + a
 
-[]
+[] m
 be=xinput
 "xrandr-brightness.sh up"
 Shift+Alt + s
 
-[]
+[] m
 be=kde_custom
 "if [ "$(xdotool getactivewindow getwindowname)" = 'Tagaini Jisho' ]; then xdotool getactivewindow windowminimize; else wmctrl -Fa 'Tagaini Jisho' || tagainijisho & fi"
 Shift+Mod4 + 1

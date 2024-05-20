@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This supports source arrays with holes (some elements have been unset).
+# Only for integer-indexed arrays.
 copy_array() {
     local from_var_name=$1
     local to_var_name=$2
@@ -49,4 +51,17 @@ input_to_array() {
     fi
     IFS=$old_ifs
     copy_array tmp "$var_name"
+}
+
+# This might work with local arrays
+remove_val_from_array_no_hole() {
+    local -n arr_ref=$1 # Pass the array var name as $1
+    local value=$2
+    local temp_array=()
+    
+    for element in "${arr_ref[@]}"; do
+        [ "$element" != "$value" ] && temp_array+=("$element")
+    done
+    
+    arr_ref=("${temp_array[@]}")
 }
