@@ -26,8 +26,13 @@ fpkg_apt_update_once() {
     }
 }
 
-fpkg_apt_update_once
-sudo apt upgrade -y
+if is-kde-neon.sh; then
+    pkcon refresh
+    pkcon update
+else
+    fpkg_apt_update_once
+    sudo apt upgrade -y
+fi
 sudo snap refresh
 cmd-exists.sh pip3 && pip3 install --upgrade
 cmd-exists.sh pipx && pipx upgrade-all
