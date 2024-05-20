@@ -145,6 +145,13 @@ fpkg_install() {
     [ -d "$fullpath"/files-root ] && sudo rsync -rl "$fullpath"/files-root/ /
 
 
+    [ -f "$fullpath/ppa.txt" ] && { # TODO Optimize this
+        for i in $(fpkg_parse_deps "$fullpath/ppa.txt"); do
+            sudo add-apt-repository -y "$i"
+        done
+        sudo apt update
+    }
+
     [ -f "$fullpath/apt.txt" ] && {
         while pgrep -a '^(apt|dpkg)' || pidof -x unattended-upgrades; do
             print_info "Waiting for apt/dpkg/unattended-upgrades to end"
