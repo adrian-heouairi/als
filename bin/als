@@ -147,7 +147,7 @@ fpkg_install() {
 
     [ -f "$fullpath/ppa.txt" ] && { # TODO Optimize this
         for i in $(fpkg_parse_deps "$fullpath/ppa.txt"); do
-            sudo add-apt-repository -y "$i"
+            sudo add-apt-repository -y --no-update "$i"
         done
         sudo apt update
     }
