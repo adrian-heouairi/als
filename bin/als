@@ -35,7 +35,7 @@ cmd-exists.sh brew && brew upgrade
 
 # Install basic dependencies
 fpkg_apt_update_once
-sudo apt install -y plocate rsync curl wget wmctrl xdotool x11-utils xsel
+sudo apt install -y plocate rsync curl wget wmctrl xdotool x11-utils xsel git
 
 # Repositories before in the list have more priority for packages with the same name
 pkg_repos=("$ALS_CUSTOM_FULLPATH/repository" "$ALS_FULLPATH/repository")
