@@ -28,7 +28,7 @@ fpkg_apt_update_once() {
 
 if is-kde-neon.sh; then
     pkcon refresh
-    pkcon update
+    pkcon update || true
 else
     fpkg_apt_update_once
     sudo apt upgrade -y
