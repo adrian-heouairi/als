@@ -34,7 +34,7 @@ else
     sudo apt upgrade -y
 fi
 sudo snap refresh
-cmd-exists.sh pip3 && pip3 install --upgrade
+cmd-exists.sh pip3 && pip3 install --upgrade --user --break-system-packages
 cmd-exists.sh pipx && pipx upgrade-all
 cmd-exists.sh brew && brew upgrade
 
