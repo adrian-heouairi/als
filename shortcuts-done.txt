@@ -4,14 +4,14 @@ backends : xbindkeys, autokey, xinput(todo improve), kde_global, kde_custom, kon
 # Standard order of modifiers in xbindkeys: Control+Shift+Alt+Mod4+Mod5
 # The order of modifiers in KDE programs is Meta+Ctrl+Alt+Shift (Alt Gr cannot be used as a modifier)
 
-[] m
-be=kde_custom
-cmd=maximize-window-class.sh Navigator.firefox
-sc=Mod4 + f
+#[] m
+#be=kde_custom
+#cmd=maximize-window-class.sh Navigator.firefox
+#sc=Mod4 + f
 
 [] m
 be=kde_custom
-cmd=toggle-microphone-mute.sh
+#cmd=toggle-microphone-mute.sh
 sc=Alt + z
 
 []

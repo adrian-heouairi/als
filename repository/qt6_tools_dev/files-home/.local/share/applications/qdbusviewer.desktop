@@ -1,0 +1,5 @@
+[Desktop Entry]
+Exec=sh -c "QT_SELECT=6 exec qdbusviewer"
+Icon=qt
+Name=QDBusViewer
+Type=Application
