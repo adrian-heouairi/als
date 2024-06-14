@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# TODO I wrote this project before knowing about declare/local -n
-
 source ~/.local/als/source/als-bin.sh || exit 1
 
 # Bypass set -u
@@ -36,7 +34,10 @@ fi
 sudo snap refresh
 #cmd-exists.sh pip3 && pip3 install --user --break-system-packages --upgrade # TODO Not working, it requires arguments
 cmd-exists.sh pipx && pipx upgrade-all
-cmd-exists.sh brew && brew upgrade
+cmd-exists.sh brew && {
+    brew update
+    brew upgrade
+}
 
 # Install basic dependencies
 fpkg_apt_update_once

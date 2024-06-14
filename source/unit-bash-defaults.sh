@@ -5,9 +5,9 @@
 # All variable definitions in this script are available to scripts that source it, even without export
 # Arguments passed to the sourcing script are available here, even without explicitly passing them when sourcing
 
-set -u -e -o pipefail
-shopt -s extglob
-shopt -s nullglob
+source ~/.local/als/source/subunit-common-for-bash-defaults-and-bashrc-package.sh || exit 1
+
+set -u -e
 
 trap exit SIGINT
 

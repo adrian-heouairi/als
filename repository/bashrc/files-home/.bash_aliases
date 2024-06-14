@@ -1,3 +1,5 @@
+source ~/.local/als/source/subunit-common-for-bash-defaults-and-bashrc-package.sh || exit 1
+
 [ "$PWD" = "$HOME" ] && cd /tmp
 
 #PS1='$?|\[\e[1;35m\]\w\[\e[m\]\$ '

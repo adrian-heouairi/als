@@ -1,3 +1,15 @@
+Note that by default on Ubuntu (and maybe everywhere), bash scripts and bash -c do not source any configuration file, including ~/.bashrc, ~/.bash_profile, ~/.bash_login, ~/.profile and anything in /etc. Environment variables set in .profile and .bashrc by als are thus not available to your bash scripts immediately, you have to logout login or even restart for this. Scripts launched in a terminal emulator will get the variables from ~/.bashrc, so you don't need to logout login for this.
+
+
+
+
+
+
+
+
+
+
+
 # linux-setup
 
 Setup scripts that setup a Kubuntu installation. Installs apt packages, puts my scripts in the PATH, etc. The scripts can be relaunched to update programs, etc.
