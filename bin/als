@@ -2,10 +2,6 @@
 
 source ~/.local/als/source/als-bin.sh || exit 1
 
-# Bypass set -u
-action=${1+"$1"}
-shift || true
-
 mkdir -p -- ~/bin ~/.local/bin ~/.local/share/applications ~/.config/autostart "$ALS_INSTALLED_FULLPATH" "$ALS_CUSTOM_FULLPATH" "$ALS_INSTALLED_FULLPATH"/{packages,programs,bin-symlinks} "$ALS_CUSTOM_FULLPATH"/{bin,autostart.d,env.d,repository}
 
 echo "[Desktop Entry]
@@ -247,6 +243,59 @@ fpkg_parse_args() {
         copy_array res "$var_name"
 }
 
+# Does nothing when no arguments given
+fpkg_run_args() {
+    # Bypass set -u
+    action=${1+"$1"}
+    shift || true
+
+    if [ "$action" = install ]; then
+        (($# == 0)) && print_err_exit "No arguments given"
+
+        fpkg_parse_args to_install "$@"
+
+        for i in "${to_install[@]}"; do
+            fpkg_is_installed "$i" && {
+                print_info "'$i' is already installed, skipping"
+                continue
+            }
+            fpkg_install "$i"
+        done
+    elif [ "$action" = upgrade ]; then
+        if (($# == 0)); then
+            fpkg_get_installed to_upgrade
+        else
+            fpkg_parse_args to_upgrade "$@"
+        fi
+
+        for i in "${to_upgrade[@]}"; do
+            fpkg_is_installed "$i" || {
+                print_info "'$i' is not installed, skipping"
+                continue
+            }
+            fpkg_upgrade "$i"
+        done
+    elif [ "$action" = remove ]; then
+        (($# == 0)) && print_err_exit "No arguments given"
+
+        fpkg_parse_args to_remove "$@"
+
+        for i in "${to_remove[@]}"; do
+            fpkg_is_installed "$i" || {
+                print_info "'$i' is not installed, skipping"
+                continue
+            }
+            fpkg_remove "$i"
+        done
+    elif [ "$action" = list ]; then
+        fpkg_get_all all_packages
+        fpkg_print_array "${all_packages[@]}"
+    elif [ "$action" = list-installed ]; then
+        fpkg_get_installed installed_packages
+        fpkg_print_array "${installed_packages[@]}"
+    fi
+}
+
 # Remove all installed packages removed from repositories
 for i in "$ALS_INSTALLED_FULLPATH"/packages/*; do
     basename=$(basename -- "$i")
@@ -256,51 +305,10 @@ for i in "$ALS_INSTALLED_FULLPATH"/packages/*; do
     }
 done
 
-if [ "$action" = install ]; then
-    (($# == 0)) && print_err_exit "No arguments given"
+glpi_candidates=(~/.local/als-custom*/glpi/"$HOSTNAME".txt)
+[ -f "$glpi_candidates" ] && fpkg_run_args $(< "$glpi_candidates")
 
-    fpkg_parse_args to_install "$@"
-
-    for i in "${to_install[@]}"; do
-        fpkg_is_installed "$i" && {
-            print_info "'$i' is already installed, skipping"
-            continue
-        }
-        fpkg_install "$i"
-    done
-elif [ "$action" = upgrade ]; then
-    if (($# == 0)); then
-        fpkg_get_installed to_upgrade
-    else
-        fpkg_parse_args to_upgrade "$@"
-    fi
-
-    for i in "${to_upgrade[@]}"; do
-        fpkg_is_installed "$i" || {
-            print_info "'$i' is not installed, skipping"
-            continue
-        }
-        fpkg_upgrade "$i"
-    done
-elif [ "$action" = remove ]; then
-    (($# == 0)) && print_err_exit "No arguments given"
-
-    fpkg_parse_args to_remove "$@"
-
-    for i in "${to_remove[@]}"; do
-        fpkg_is_installed "$i" || {
-            print_info "'$i' is not installed, skipping"
-            continue
-        }
-        fpkg_remove "$i"
-    done
-elif [ "$action" = list ]; then
-    fpkg_get_all all_packages
-    fpkg_print_array "${all_packages[@]}"
-elif [ "$action" = list-installed ]; then
-    fpkg_get_installed installed_packages
-    fpkg_print_array "${installed_packages[@]}"
-fi
+fpkg_run_args "$@"
 
 # Delete broken symlinks
 find "$ALS_INSTALLED_FULLPATH"/bin-symlinks -xtype l -delete
