@@ -117,6 +117,13 @@ fpkg_remove() {
     local package_name=$1
     local installed_fullpath=$ALS_INSTALLED_FULLPATH/packages/$package_name
 
+    [ -f "$installed_fullpath/cron-user.txt" ] && {
+        { crontab -l 2> /dev/null || true; } | grep -vF " #als:$package_name" | crontab - || true
+    }
+    [ -f "$installed_fullpath/cron-root.txt" ] && {
+        { sudo crontab -l 2> /dev/null || true; } | grep -vF " #als:$package_name" | sudo crontab - || true
+    }
+
     [ -f "$installed_fullpath/stop-daemons.sh" ] && "$installed_fullpath/stop-daemons.sh"
 
     rm -rf -- "$installed_fullpath"
@@ -198,6 +205,21 @@ fpkg_install() {
         [ -f "$fullpath/install.sh" ] && "$fullpath/install.sh"
     fi
     [ -f "$fullpath/autostart.sh" ] && "$fullpath/autostart.sh" & disown
+
+    [ -f "$fullpath/cron-user.txt" ] && {
+        {
+            crontab -l 2> /dev/null || true
+            echo
+            sed "s/$/ #als:$package_name/" "$fullpath/cron-user.txt"
+        } | crontab -
+    }
+    [ -f "$fullpath/cron-root.txt" ] && {
+        {
+            sudo crontab -l 2> /dev/null || true
+            echo
+            sed "s/$/ #als:$package_name/" "$fullpath/cron-root.txt"
+        } | sudo crontab -
+    }
 
     cp -r -- "$(fpkg_field "$package_name" fullpath)" "$(fpkg_field "$package_name" installed_fullpath)"
 }
