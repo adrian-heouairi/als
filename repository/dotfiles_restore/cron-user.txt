@@ -1,1 +1,1 @@
-0 * * * * /home/abc/.local/als-installed/packages/dotfiles_backup/bin/dotfiles-restore.sh
+30 * * * * /home/abc/.local/als-installed/packages/dotfiles_backup/bin/dotfiles-restore.sh

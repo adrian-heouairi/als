@@ -209,14 +209,12 @@ fpkg_install() {
     [ -f "$fullpath/cron-user.txt" ] && {
         {
             crontab -l 2> /dev/null || true
-            echo
             sed "s/$/ #als:$package_name/" "$fullpath/cron-user.txt"
         } | crontab -
     }
     [ -f "$fullpath/cron-root.txt" ] && {
         {
             sudo crontab -l 2> /dev/null || true
-            echo
             sed "s/$/ #als:$package_name/" "$fullpath/cron-root.txt"
         } | sudo crontab -
     }
