@@ -131,7 +131,7 @@ fpkg_remove() {
 
 # Set $2 non-empty to upgrade instead of install
 fpkg_install() {
-    local package_name=$1 upgrade=${2:-$2}
+    local package_name=$1 upgrade=${2+$2}
 
     fpkg_exists "$package_name" || print_err_exit "No package named '$package_name' found"
 
