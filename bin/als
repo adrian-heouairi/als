@@ -328,7 +328,7 @@ for i in "$ALS_INSTALLED_FULLPATH"/packages/*; do
 done
 
 glpi_candidates=(~/.local/als-custom*/glpi/"$HOSTNAME".txt)
-[ -f "$glpi_candidates" ] && fpkg_run_args $(< "$glpi_candidates")
+[ -f "$glpi_candidates" ] && fpkg_run_args install $(< "$glpi_candidates")
 
 fpkg_run_args "$@"
 
