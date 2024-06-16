@@ -9,11 +9,11 @@
 mkdir -p ~/.local/als-custom-60-from-aetu2/packages-conf/dotfiles
 
 # Paths are relative to ~, no trailing slash for directories
-
 exclude=(
 .config/gtk-3.0/bookmarks
 )
 
+# Paths are relative to ~, put a trailing slash for directories
 include=(
 .config/eog/
 .config/fcitx5/
