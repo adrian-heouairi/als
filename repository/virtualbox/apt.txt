@@ -1,1 +1,3 @@
-virtualbox-qt virtualbox-guest-additions-iso virtualbox-ext-pack
+virtualbox-qt virtualbox-guest-additions-iso
+
+virtualbox-ext-pack # Requires manual input at installation?
