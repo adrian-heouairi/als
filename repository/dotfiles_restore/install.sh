@@ -2,4 +2,4 @@
 
 source ~/.local/als/source/als-bin.sh || exit 1
 
-exec ~/.local/als/repository/dotfiles_backup/bin/dotfiles-restore.sh
+exec ~/.local/als/repository/dotfiles_restore/bin/dotfiles-restore.sh

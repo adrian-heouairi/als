@@ -77,4 +77,4 @@ done
 
 cmd+=(--exclude='*' ~/ ~/.local/als-custom-60-from-aetu2/packages-conf/dotfiles/)
 
-exec "${cmd[@]}"
+"${cmd[@]}" || true

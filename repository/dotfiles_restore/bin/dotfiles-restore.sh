@@ -6,4 +6,4 @@ src=~/.local/als-custom-60-from-aetu2/packages-conf/dotfiles
 
 [ -d "$src" ] || exit 0
 
-exec rsync -rl "$src"/ ~/
+rsync -rl "$src"/ ~/ || true

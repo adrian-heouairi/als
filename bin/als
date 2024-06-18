@@ -4,11 +4,24 @@ source ~/.local/als/source/als-bin.sh || exit 1
 
 mkdir -p -- ~/bin ~/.local/bin ~/.local/share/applications ~/.config/autostart "$ALS_INSTALLED_FULLPATH" "$ALS_CUSTOM_FULLPATH" "$ALS_INSTALLED_FULLPATH"/{packages,programs,bin-symlinks} "$ALS_CUSTOM_FULLPATH"/{bin,autostart.d,env.d,repository}
 
+
+
+echo "[Unit]
+Description=als-autostart.sh
+
+[Service]
+ExecStart=$HOME/.local/als/bin/als-autostart.sh
+Type=simple" > ~/.config/systemd/user/als-autostart.service
+systemctl --user daemon-reload
+
 echo "[Desktop Entry]
-Exec=bash -c \"exec $ALS_FULLPATH_SHELL/bin/als-autostart.sh\"
+#Exec=bash -c \"exec $ALS_FULLPATH_SHELL/bin/als-autostart.sh\"
+Exec=systemctl --user restart als-autostart.service
 Icon=dialog-scripts
 Name=als-autostart.sh
 Type=Application" > ~/.config/autostart/als-autostart.desktop
+
+
 
 put-line-in-file.sh ~/.bashrc "source $ALS_FULLPATH_SHELL/source/bashrc.sh"
 put-line-in-file.sh ~/.profile "source $ALS_FULLPATH_SHELL/source/profile.sh"
