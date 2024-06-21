@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec playerctld daemon
+exec playerctld

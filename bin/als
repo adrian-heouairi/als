@@ -26,20 +26,24 @@ Type=Application" > ~/.config/autostart/als-autostart.desktop
 put-line-in-file.sh ~/.bashrc "source $ALS_FULLPATH_SHELL/source/bashrc.sh"
 put-line-in-file.sh ~/.profile "source $ALS_FULLPATH_SHELL/source/profile.sh"
 
-if is-kde-neon.sh; then
-    pkcon refresh
-    sudo pkcon update || true
+if [ "${1+$1}" = --skip ]; then
+    shift || true
 else
-    sudo apt update
-    sudo apt upgrade -y
+    if is-kde-neon.sh; then
+        pkcon refresh
+        sudo pkcon update || true
+    else
+        sudo apt update
+        sudo apt upgrade -y
+    fi
+    sudo snap refresh
+    #cmd-exists.sh pip3 && pip3 install --user --break-system-packages --upgrade # TODO Not working, it requires arguments
+    cmd-exists.sh pipx && pipx upgrade-all
+    cmd-exists.sh brew && {
+        brew update
+        brew upgrade
+    }
 fi
-sudo snap refresh
-#cmd-exists.sh pip3 && pip3 install --user --break-system-packages --upgrade # TODO Not working, it requires arguments
-cmd-exists.sh pipx && pipx upgrade-all
-cmd-exists.sh brew && {
-    brew update
-    brew upgrade
-}
 
 # Install basic dependencies
 sudo apt install -y plocate rsync curl wget wmctrl xdotool x11-utils xsel git

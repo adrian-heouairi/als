@@ -78,3 +78,8 @@ done
 cmd+=(--exclude='*' ~/ ~/.local/als-custom-60-from-aetu2/packages-conf/dotfiles/)
 
 "${cmd[@]}" || true
+
+kglobalaccel=$(grep -rFx X-KDE-GlobalAccel-CommandShortcut=true ~/.local/share/applications/ | sed -E 's/desktop:X-.+/desktop/')
+mkdir -p ~/.local/als-custom-60-from-aetu2/packages-conf/dotfiles/.local/share/applications/
+IFS=$'\n'
+cp -f -- $kglobalaccel ~/.local/als-custom-60-from-aetu2/packages-conf/dotfiles/.local/share/applications/
