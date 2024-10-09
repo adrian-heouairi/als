@@ -1,10 +1,10 @@
 #!/bin/bash
 
 case "$1" in
-q) c='\[General\] - Chrome$';;
-c) c='\[Music\] - Chrome$';;
-v) c='\[Videos\] - Chrome$';;
-x) c='\[Social\] - Chrome$';;
+q) c='\[General\]';;
+c) c='\[Music\]';;
+v) c='\[Videos\]';;
+x) c='\[Social\]';;
 esac
 
 exec windows-cycle.sh "$c"

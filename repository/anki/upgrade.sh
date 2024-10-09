@@ -3,10 +3,12 @@
 current_anki_ver=$(anki --version | sed -n '$s/.* //p')
 latest_anki_ver=$(curl --retry 10 -Lso /dev/null -w '%{url_effective}' https://github.com/ankitects/anki/releases/latest | sed 's|.*/||')
 if [ "$current_anki_ver" != "$latest_anki_ver" ]; then
+    sudo apt install libxcb-xinerama0 libxcb-cursor0 libnss3 zstd
+
     anki_dir=/tmp/anki-"$(uuidgen)"
     anki_archive=anki-"$latest_anki_ver"-linux-qt6.tar.zst
     mkdir -p -- "$anki_dir"
-    cd -- "$anki_dir"
+    cd -- "$anki_dir" || exit 1
     wget https://github.com/ankitects/anki/releases/download/"$latest_anki_ver"/"$anki_archive" &&
     tar --use-compress-program=unzstd -xf "$anki_archive" &&
     cd anki-"$latest_anki_ver"-linux-qt6 && {
