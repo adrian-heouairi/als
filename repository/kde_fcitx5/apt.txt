@@ -1,1 +1,0 @@
-kde-config-fcitx5 fcitx5-frontend-gtk2 fcitx5-mozc fcitx5-pinyin-gui

@@ -2,7 +2,7 @@
 
 source ~/.local/als/source/als-bin.sh || exit 1
 
-mkdir -p -- ~/bin ~/.local/bin ~/.local/share/applications ~/.config/autostart "$ALS_INSTALLED_FULLPATH" "$ALS_CUSTOM_FULLPATH" "$ALS_INSTALLED_FULLPATH"/{packages,programs,bin-symlinks} "$ALS_CUSTOM_FULLPATH"/{bin,autostart.d,env.d,repository}
+mkdir -p -- ~/bin ~/.local/bin ~/.local/share/applications ~/.config/autostart "$ALS_INSTALLED_FULLPATH"/{packages,programs,bin-symlinks} "$ALS_CUSTOM_FULLPATH"/{bin,autostart.d,env.d,repository} ~/.config/systemd/user
 
 
 
@@ -46,7 +46,7 @@ else
 fi
 
 # Install basic dependencies
-sudo apt install -y plocate rsync curl wget wmctrl xdotool x11-utils xsel git
+sudo apt install -y plocate rsync curl wget wmctrl xdotool x11-utils xsel git qdbus-qt5
 
 # Repositories before in the list have more priority for packages with the same name
 pkg_repos=("$ALS_CUSTOM_FULLPATH/repository" "$ALS_FULLPATH/repository")
@@ -342,8 +342,8 @@ for i in "$ALS_INSTALLED_FULLPATH"/packages/*; do
     }
 done
 
-glpi_candidates=(~/.local/als-custom*/glpi/"$HOSTNAME".txt)
-[ -f "${glpi_candidates+$glpi_candidates}" ] && fpkg_run_args install $(fpkg_parse_deps "$glpi_candidates")
+# glpi_candidates=(~/.local/als-custom*/glpi/"$HOSTNAME".txt)
+# [ -f "${glpi_candidates+$glpi_candidates}" ] && fpkg_run_args install $(fpkg_parse_deps "$glpi_candidates")
 
 fpkg_run_args "$@"
 

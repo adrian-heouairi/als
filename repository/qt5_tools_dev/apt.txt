@@ -1,0 +1,3 @@
+# qt6-tools-dev qtchooser
+
+qttools5-dev-tools qtchooser

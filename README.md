@@ -1,3 +1,10 @@
+Place repository in ~/.local/
+The first time, just run ~/.local/als/bin/als install @all
+After adding new packages or renaming packages run als install @all
+Periodically run als upgrade
+
+
+
 Note that by default on Ubuntu (and maybe everywhere), bash scripts and bash -c do not source any configuration file, including ~/.bashrc, ~/.bash_profile, ~/.bash_login, ~/.profile and anything in /etc. Environment variables set in .profile and .bashrc by als are thus not available to your bash scripts immediately, you have to logout login or even restart for this. Scripts launched in a terminal emulator will get the variables from ~/.bashrc, so you don't need to logout login for this.
 
 
