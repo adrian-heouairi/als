@@ -30,12 +30,12 @@ if ((situation == 2)); then
 #    echo "DEBUG: next_window_title"$'\n'"$next_window_title"
     wmctrl -ia "$next_window_id"
 elif ((situation == 1)); then
-    notify-send -i flag-red -t "$notification_delay" Cycle OFF
+    #notify-send -i flag-red -t "$notification_delay" Cycle OFF
     for i in $matching_window_ids; do
         xdotool windowminimize -- "$i"
     done
 elif ((situation == 0)); then
-    notify-send -i flag-green -t "$notification_delay" Cycle ON
+    #notify-send -i flag-green -t "$notification_delay" Cycle ON
     first_window_id=$(awk NR==1 <<< "$matching_window_ids")
 #    echo "DEBUG: first_window_title"$'\n'"$first_window_title"
     wmctrl -ia "$first_window_id"
