@@ -1,0 +1,4 @@
+#!/bin/bash
+
+which=$(which -- "$1")
+cat -- "$(head -n 1 <<< "$which")"

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-notify-send "Launching borg-mount.sh on '$1'"
-
 borg_repo_fullpath=$(realpath -- "$1")
+
+notify-send borg-mount.sh "Launching borg-mount.sh on '$borg_repo_fullpath'"
 
 [[ $borg_repo_fullpath =~ ^/.+ ]] || exit 1
 
@@ -15,3 +15,7 @@ mkdir -p "$mount_fullpath" || exit 1
 qterminal -e borg mount "$borg_repo_fullpath" "$mount_fullpath"
 
 mountpoint "$mount_fullpath" && pcmanfm-qt "$mount_fullpath"
+
+echo "Unmount later with 'borg umount '$mount_fullpath'' or 'sudo umount '$mount_fullpath''"
+
+notify-send borg-mount.sh "Unmount later with 'borg umount '$mount_fullpath'' or 'sudo umount '$mount_fullpath''"
