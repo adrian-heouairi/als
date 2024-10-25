@@ -1,7 +1,7 @@
 #!/bin/bash
 
 case "$1" in
-q) c='\[General\]';;
+z) c='\[General\]';;
 c) c='\[Music\]';;
 v) c='\[Videos\]';;
 x) c='\[Social\]';;

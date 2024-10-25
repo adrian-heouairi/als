@@ -1,4 +1,21 @@
 #!/bin/bash
 
-which=$(which -- "$1")
-cat -- "$(head -n 1 <<< "$which")"
+for i; do
+    arg=$i
+    which=$(which -- "$arg") || { echo "======================================== Error: No command named '$arg' found"; continue; }
+
+    which_fullpath=$(head -n 1 <<< "$which") # Note that which doesn't resolve any symlink
+
+    [ -e "$which_fullpath" ] || { echo "======================================== Error: File '$which_fullpath' obtained from 'which $arg' does not exist anymore"; continue; }
+
+    cmd_realpath=$(realpath -- "$which_fullpath")
+
+    [ "$cmd_realpath" = "$which_fullpath" ] || echo -e "======================================== Symlink chain:\n$(namei -- "$which_fullpath")"
+
+    echo -e "======================================== 'file' command output:\n$(file -- "$cmd_realpath")"
+
+    file --mime-type --brief -- "$cmd_realpath" | grep -q '^text/' || { echo "======================================== Note: '$cmd_realpath' is not a text file, can't cat it"; continue; }
+
+    echo "======================================== '$cmd_realpath' contents:"
+    cat -- "$cmd_realpath"
+done

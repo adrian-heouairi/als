@@ -10,7 +10,9 @@ export ALS_FULLPATH=~/.local/als
 export ALS_INSTALLED_FULLPATH=~/.local/als-installed
 export ALS_CUSTOM_FULLPATH=~/.local/als-custom
 
-[ -e /home/linuxbrew/.linuxbrew/bin/brew ] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+if [ -e /home/linuxbrew/.linuxbrew/bin/brew ]; then
+    ulimit -Sn "$(ulimit -Hn)"; eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 printf '%s\n' "$PATH" | sed 's/:/\n/g' | grep -qFx "$HOME/.local/bin" || export "PATH=$HOME/.local/bin:$PATH"
 printf '%s\n' "$PATH" | sed 's/:/\n/g' | grep -qFx "$HOME/bin" || export "PATH=$HOME/bin:$PATH"
