@@ -9,3 +9,4 @@ pcmanfm-qt --set-wallpaper="$HOME"/.config/als-pcmanfm-wallpaper
 
 pcmanfm-qt --desktop-off
 pcmanfm-qt --desktop
+#pcmanfm-restart.sh

@@ -1,6 +1,6 @@
 curl imagemagick borgbackup python3-pyfuse3 ffmpeg wmctrl xdotool xsel libnotify-bin sqlite3 ddcutil qemu-utils git manpages-posix-dev dislocker zram-config mp3gain shellcheck gcc make plocate pulseaudio-utils apt-file syncthing python3-pip
 
-eog audacity gucharmap gimp gnome-calculator gnome-system-monitor gnome-clocks gparted gsmartcontrol cheese
+eog eog-plugins audacity gucharmap gimp gnome-calculator gnome-system-monitor gnome-clocks gparted gsmartcontrol cheese
 
 ttf-mscorefonts-installer wireshark # These require manual input at installation
 

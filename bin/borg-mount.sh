@@ -1,4 +1,5 @@
 #!/bin/bash
+#als-desktop %f
 
 borg_repo_fullpath=$(realpath -- "$1")
 

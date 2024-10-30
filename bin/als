@@ -218,7 +218,11 @@ fpkg_install() {
     if [ "$upgrade" ]; then
         [ -f "$fullpath/upgrade.sh" ] && "$fullpath/upgrade.sh"
     else
-        [ -f "$fullpath/install.sh" ] && "$fullpath/install.sh"
+        if [ -f "$fullpath/upgrade.sh" ] && ! [ -f "$fullpath/install.sh" ]; then
+            "$fullpath/upgrade.sh"
+        else
+            [ -f "$fullpath/install.sh" ] && "$fullpath/install.sh"
+        fi
     fi
     [ -f "$fullpath/autostart.sh" ] && "$fullpath/autostart.sh" & disown
 

@@ -1,4 +1,5 @@
 #!/bin/bash
+#als-desktop %f
 
 [ "$1" ] && dir=$1 || dir=.
 
