@@ -1,1 +1,0 @@
-0 * * * * /home/abc/.local/als-installed/packages/dotfiles_backup/bin/dotfiles-backup.sh

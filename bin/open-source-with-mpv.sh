@@ -1,4 +1,5 @@
 #!/bin/bash
+#als-desktop %f
 
 path=$1
 

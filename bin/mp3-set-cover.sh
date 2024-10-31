@@ -10,7 +10,7 @@ get-cover() {
         return 0
     fi
     
-    [[ $ans =~ ^file:// ]] && ans=$(file-url-to-fullpath.sh "$ans")
+    [[ $ans =~ ^file:// ]] && ans=$(conv-file-urls-to-fullpaths.sh "$ans")
     if [[ $ans =~ ^/ ]]; then
         if grep -i '\.mp3$' <<< "$ans" > /dev/null; then
             rm -f /tmp/mp3-cover &>/dev/null

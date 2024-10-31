@@ -3,7 +3,7 @@
 mime_type=$1
 desktop_file=$2
 
-file=~/.config/mimeapps.list
+file=~/.config/mimeapps.list # TODO ~/.config/lxqt-mimeapps.list
 
 [ -e "$file" ] || echo -e '[Added Associations]\n\n[Default Applications]' >> "$file"
 
