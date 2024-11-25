@@ -1,3 +1,3 @@
 #!/bin/bash
 
-killall -9 xbindkeys || true
+#killall -9 xbindkeys || true

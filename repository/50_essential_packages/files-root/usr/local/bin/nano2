@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e -u
+
+touch2 "$1" && nano -- "$1"

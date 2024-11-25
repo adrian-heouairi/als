@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# No yt-dlp options are supported anymore
+
 # Get a file written by default in the current directory from a URL
 # Usage: yt-dlp.sh [OPTION]... [--] [YT-DLP OPTION]... [--] [URL]...
 # You can override the default behavior by providing yt-dlp options e.g. --yes-playlist
@@ -24,4 +26,6 @@ while true; do
 	esac
 done
 
-yt-dlp --no-overwrites --no-playlist $mp3 --add-metadata --metadata-from-title "$mft" --embed-thumbnail --output "${dir%/}/$out" "$@"
+for i; do
+	yt-dlp --no-overwrites --no-playlist $mp3 --add-metadata --metadata-from-title "$mft" --embed-thumbnail --output "${dir%/}/$out" -- "$i" &> /dev/null || echo "Failed: $i"
+done

@@ -1,7 +1,9 @@
 #!/bin/bash
 
-source ~/.local/als/source/unit-als-bash-functions.sh || exit 1
-source ~/.local/als/source/unit-als-env.sh || exit 1
-source ~/.local/als/source/unit-bash-defaults.sh || exit 1
-source ~/.local/als/source/unit-bash-functions.sh || exit 1
-source ~/.local/als/source/unit-env.sh || exit 1
+# exit 1 here doesn't make the sourcing script exit for some reason
+
+source ~/.local/als/source/unit-als-bash-functions.sh
+source ~/.local/als/source/unit-als-env.sh
+source ~/.local/als/source/unit-bash-defaults.sh
+source ~/.local/als/source/unit-bash-functions.sh
+source ~/.local/als/source/unit-env.sh

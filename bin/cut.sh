@@ -126,7 +126,7 @@ if [ "$video_codec" ]; then
             ln -s -- "$1" "$text_subtitles_to_burn"
         fi
     fi
-    ffmpeg_command=(ffmpeg -stats_period 3 -progress "$progress_file" -y $([ "$2" ] && echo -ss "$2") $([ "$3" ] && echo -to "$3") -copyts -i "$1" $([ "$2" ] && echo -ss "$2") $([ "$3" ] && echo -to "$3") $([[ $video_codec =~ ^(default|d)$ ]] || echo -vcodec $video_codec) $([[ $audio_codec =~ ^(default|d)$ ]] || echo -acodec $audio_codec) $([ "$picture_subtitles_to_burn" ] && echo -filter_complex [0:v][0:$subtitle_track]overlay[v] -map [v] || echo -map 0:v?) $([ "$audio_track" ] && echo -map 0:$audio_track || echo -map 0:a?) $([ "$text_subtitles_to_burn" ] && echo -vf subtitles=$text_subtitles_to_burn:stream_index=$subtitle_track_restricted) -metadata title="$title" $ffmpeg_options -- "$tmp_output_path")
+    ffmpeg_command=(ffmpeg -stats_period 3 -progress "$progress_file" -y $([ "$2" ] && echo -ss "$2") $([ "$3" ] && echo -to "$3") -copyts -i "$1" $([ "$2" ] && echo -ss "$2") $([ "$3" ] && echo -to "$3") $([[ $video_codec =~ ^(default|d)$ ]] || echo -vcodec $video_codec) $([[ $audio_codec =~ ^(default|d)$ ]] || echo -acodec $audio_codec) $([ "$picture_subtitles_to_burn" ] && echo -filter_complex [0:v][0:$subtitle_track]overlay[v] -map [v] || echo -map 0:v?) $([ "$audio_track" ] && echo -map 0:$audio_track || echo -map 0:a?) $([ "$text_subtitles_to_burn" ] && echo -vf subtitles=$text_subtitles_to_burn:stream_index=$subtitle_track_restricted) -metadata title="$title" $ffmpeg_options -ac 2 -- "$tmp_output_path")
 else # Audio only
     ffmpeg_command=(ffmpeg -stats_period 3 -progress "$progress_file" -y $([ "$2" ] && echo -ss "$2") $([ "$3" ] && echo "-to $3") -copyts -i "$1" $([ "$2" ] && echo -ss "$2") $([ "$3" ] && echo "-to $3") -vcodec copy $([[ $audio_codec =~ ^(default|d)$ ]] || echo -acodec $audio_codec) $([ "$audio_track" ] && echo -map 0:v? -map -0:V? -map 0:$audio_track) -metadata title="$title" $ffmpeg_options -- "$tmp_output_path")
 fi
@@ -148,6 +148,8 @@ mv -f -- "$tmp_output_path" "$output_path"
 printf '%s\n' "$output_path"
 
 notify-send -i edit-cut -- "$script_name" "Cut finished for $output_path"
+
+echo "Cut succeeded" 1>&2
 
 if [ "$open" ]; then
     cd -- "$(dirname -- "$output_path")"

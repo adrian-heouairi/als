@@ -1,6 +1,6 @@
 #!/bin/bash
 
-increment=0.1
+increment=0.03
 
 get-connected-outputs() {
     xrandr=$(xrandr)
@@ -48,3 +48,5 @@ done
 
 printf %s "$new_brightness" > /dev/shm/xrandr-brightness-brightness
 printf %s "$outputs" > /dev/shm/xrandr-brightness-outputs
+
+notify-send -r 129371 -i display-brightness -t 1000 xrandr-brightness.sh "New brightness: $new_brightness / 1.0"
